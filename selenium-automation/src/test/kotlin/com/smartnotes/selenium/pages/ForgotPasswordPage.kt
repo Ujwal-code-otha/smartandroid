@@ -39,6 +39,8 @@ class ForgotPasswordPage(private val driver: WebDriver) {
     fun isEmailVisible()     = WaitUtils.isPresent(driver, emailInput)
     fun isSubmitEnabled()    = driver.findElements(submitButton).firstOrNull()?.isEnabled ?: false
     fun isBackLinkVisible()  = WaitUtils.isPresent(driver, backToLogin)
+    fun isSubmitButtonVisible() = WaitUtils.isPresent(driver, submitButton)
+    fun isBackToLoginVisible()  = WaitUtils.isPresent(driver, backToLogin)
     fun isSuccessVisible()   = WaitUtils.isPresent(driver, successMessage)
     fun isErrorVisible()     = WaitUtils.isPresent(driver, errorMessage)
     fun isHeadingVisible()   = WaitUtils.isPresent(driver, pageHeading)

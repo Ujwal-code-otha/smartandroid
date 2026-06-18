@@ -1,13 +1,9 @@
 plugins {
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm")
 }
 
 group = "com.smartnotes.selenium"
 version = "1.0.0"
-
-repositories {
-    mavenCentral()
-}
 
 val seleniumVersion = "4.21.0"
 val junitVersion   = "5.10.2"
@@ -41,13 +37,11 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    systemProperty("allure.results.directory", "$buildDir/allure-results")
+    systemProperty("allure.results.directory", layout.buildDirectory.dir("allure-results").get().asFile.absolutePath)
     testLogging {
         events("passed", "failed", "skipped")
         showStandardStreams = true
     }
-    // Retry failed tests up to 2 times
-    maxFailedTests(200)
 }
 
 kotlin {

@@ -12,6 +12,8 @@ object TestData {
     // ── Valid credentials ───────────────────────────────────────────────────────
     const val VALID_EMAIL    = "shreyassatishkumar@gmail.com"
     const val VALID_PASSWORD = "123456"
+    const val TEST_EMAIL     = "shreyassatishkumar@gmail.com"
+    const val TEST_PASSWORD  = "123456"
 
     // ── Invalid credentials ─────────────────────────────────────────────────────
     const val INVALID_EMAIL    = "notauser@invalid.xyz"
@@ -20,7 +22,7 @@ object TestData {
     const val SHORT_PASSWORD   = "12"
 
     // ── Registration test data ──────────────────────────────────────────────────
-    const val NEW_USER_EMAIL    = "testuser_auto_${System.currentTimeMillis()}@test.com"
+    val NEW_USER_EMAIL get() = "testuser_auto_${System.currentTimeMillis()}@test.com"
     const val NEW_USER_PASSWORD = "Test@12345"
     const val NEW_USER_NAME     = "Automation User"
 

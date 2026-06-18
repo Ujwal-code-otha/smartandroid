@@ -1,4 +1,4 @@
-name: Combined Automation Suites
+name: Appium Mobile Suite
 
 on:
   push:
@@ -8,7 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-android:
+  build-apk:
+    name: Build Debug APK for Appium
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -30,51 +31,13 @@ jobs:
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-apk-combined
+          name: app-debug-apk-appium
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 1
 
-  selenium-suite:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-          cache: 'gradle'
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: website/package.json
-
-      - name: Install Website Dependencies
-        working-directory: website
-        run: npm ci
-
-      - name: Start Web Server
-        working-directory: website
-        run: npm run dev &
-
-      - name: Wait for Web Server (Port 3000)
-        run: npx wait-on http://localhost:3000 --timeout 60000
-
-      - name: Grant Execute Permission to Gradle Wrapper
-        run: chmod +x gradlew
-
-      - name: Run Selenium Tests
-        run: ./gradlew :selenium-automation:test
-        env:
-          HEADLESS: 'true'
-
-  appium-suite:
-    needs: build-android
+  appium-tests:
+    name: Run Appium Tests on Emulator
+    needs: build-apk
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -100,7 +63,7 @@ jobs:
       - name: Download Built APK
         uses: actions/download-artifact@v4
         with:
-          name: app-debug-apk-combined
+          name: app-debug-apk-appium
           path: app/build/outputs/apk/debug/
 
       - name: Grant Execute Permission to Gradle Wrapper
@@ -160,7 +123,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: appium-test-reports-combined
+          name: appium-reports
           path: |
             appium-automation/build/reports/
             appium-automation/build/allure-results/

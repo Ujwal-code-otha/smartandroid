@@ -43,11 +43,48 @@ jobs:
           api-level: 30
           target: google_apis
           arch: x86_64
-          force-avd-creation: false
+          force-avd-creation: true
           emulator-options: -no-window -gpu off -no-audio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
+            echo "Waiting for emulator to be online via adb..."
+            adb wait-for-device
+            
+            echo "Checking sys.boot_completed..."
+            boot_completed=""
+            while [ "$boot_completed" != "1" ]; do
+              boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r\n')
+              if [ "$boot_completed" != "1" ]; then
+                echo "Still booting (sys.boot_completed=$boot_completed)..."
+                sleep 5
+              fi
+            done
+            echo "Emulator is fully booted!"
+
+            echo "Verifying adb devices..."
+            adb devices
+            if ! adb devices | grep -E "emulator-5554\s+device"; then
+              echo "Error: emulator-5554 device not found!"
+              exit 1
+            fi
+
+            echo "Installing APK..."
+            adb install app/build/outputs/apk/debug/app-debug.apk
+
+            echo "Starting Appium server..."
+            mkdir -p build
             appium --log build/appium.log &
+
+            echo "Waiting for Appium server to start..."
+            for i in {1..30}; do
+              if nc -z localhost 4723 || curl -s http://localhost:4723/status > /dev/null; then
+                echo "Appium server is up and running!"
+                break
+              fi
+              sleep 2
+            done
+
+            echo "Executing Appium Tests..."
             ./gradlew :appium-automation:test
 
       - name: Upload Appium Test Reports

@@ -162,6 +162,16 @@ jobs:
             done
             echo "Emulator is fully booted!"
             
+            echo "Verifying adb devices..."
+            adb devices
+            if ! adb devices | grep -E "emulator-5554\s+device"; then
+              echo "Error: emulator-5554 device not found!"
+              exit 1
+            fi
+
+            echo "Installing APK..."
+            adb install app/build/outputs/apk/debug/app-debug.apk
+
             echo "Starting Appium server..."
             appium --log appium.log &
             

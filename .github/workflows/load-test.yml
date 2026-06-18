@@ -1,4 +1,4 @@
-name: Lighthouse Load Test
+name: Load Test Suite
 
 on:
   push:
@@ -8,7 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  load-test:
+  load-tests:
+    name: Run Performance Load Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -19,35 +20,17 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: website/package.json
+          cache-dependency-path: load-test-scripts/package-lock.json
 
-      - name: Install Website Dependencies
-        working-directory: website
+      - name: Install dependencies
+        working-directory: load-test-scripts
         run: npm ci
 
-      - name: Build Static Website
-        working-directory: website
-        run: |
-          npm run build
-          # Export to out folder if not handled automatically by next build
-          npx next export || true
-
-      - name: Install Lighthouse CI & Dependencies
-        run: |
-          npm install -g @lhci/cli@0.13.x
-          cd load-test-scripts
-          npm ci
-
-      - name: Run Lighthouse CI
-        run: lhci autorun
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-
-      - name: Generate Reports
-        working-directory: load-test-scripts
-        run: node generate-report.js
+      - name: Run Performance Suite
+        run: node load-test-scripts/run_perf_tests.js
 
       - name: Upload Load Test Reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: load-test-reports

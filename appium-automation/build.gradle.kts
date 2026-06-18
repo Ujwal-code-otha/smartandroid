@@ -1,13 +1,9 @@
 plugins {
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm")
 }
 
 group = "com.smartnotes.appium"
 version = "1.0.0"
-
-repositories {
-    mavenCentral()
-}
 
 val junitVersion  = "5.10.2"
 val allureVersion = "2.27.0"
@@ -40,7 +36,7 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    systemProperty("allure.results.directory", "$buildDir/allure-results")
+    systemProperty("allure.results.directory", layout.buildDirectory.dir("allure-results").get().asFile.absolutePath)
     testLogging {
         events("passed", "failed", "skipped")
         showStandardStreams = true

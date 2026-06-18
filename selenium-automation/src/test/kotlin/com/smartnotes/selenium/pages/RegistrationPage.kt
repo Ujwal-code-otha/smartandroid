@@ -49,4 +49,17 @@ class RegistrationPage(private val driver: WebDriver) {
     fun isGoogleVisible()  = WaitUtils.isPresent(driver, googleButton)
     fun isErrorVisible()   = WaitUtils.isPresent(driver, errorMessage)
     fun getPageTitle()     = driver.title
+    fun isHeadingVisible() = WaitUtils.isPresent(driver, By.xpath("//*[contains(text(),'Sign Up') or contains(text(),'Register') or contains(text(),'Create')]"))
+    fun isNameVisible() = WaitUtils.isPresent(driver, nameInput)
+    fun isPasswordVisible() = WaitUtils.isPresent(driver, passwordInput)
+    fun isConfirmPasswordVisible() = WaitUtils.isPresent(driver, confirmPassInput)
+    fun isRegisterButtonVisible() = WaitUtils.isPresent(driver, signUpButton)
+    fun clickRegister() = clickSignUp()
+    fun register(name: String, email: String, pass: String, confirmPass: String) {
+        enterName(name)
+        enterEmail(email)
+        enterPassword(pass)
+        enterConfirmPassword(confirmPass)
+        clickSignUp()
+    }
 }

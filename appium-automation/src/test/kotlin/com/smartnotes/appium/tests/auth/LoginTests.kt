@@ -13,8 +13,10 @@ class LoginTests : BaseTest() {
 
     @BeforeEach
     fun initPage() {
-        if (::driver.isInitialized) {
+        try {
             loginPage = LoginPage(driver)
+        } catch (e: Exception) {
+            // driver not initialized
         }
     }
 
